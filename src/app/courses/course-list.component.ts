@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Course } from './course';
+import { CourseService } from './course.service';
 
 
 @Component({
@@ -11,31 +12,28 @@ import { Course } from './course';
 
 export class CourseListComponent implements OnInit {
 
-  courses: Course[] = [];
+  filteredCourses: Course[];
 
-  ngOnInit(): void {
-    this.courses = [
-      {
-        id: 1,
-        name: 'Angular',
-        imageUrl: '',
-        price: 99.99,
-        code: 'xpss - 4528',
-        duration: 120,
-        rating: 4.5,
-        releaseDate: 'December, 2, 2020'
-      },
-      {
-        id: 2,
-        name: 'Reactjs',
-        imageUrl: '',
-        price: 99.99,
-        code: 'xppp - 4568',
-        duration: 80,
-        rating: 4.9,
-        releaseDate: 'December, 2, 2020'
-      }
-    ];
+  _courses: Course[] = [];
+
+  _filterBy: string;
+
+  constructor(private courseService: CourseService) {
+
   }
 
+  ngOnInit(): void {
+    this._courses = this.courseService.retrieveAll();
+    this.filteredCourses = this._courses;
+  }
+
+  set filter(value: string) {
+    this._filterBy = value;
+
+    this.filteredCourses = this._courses.filter((course: Course) => course.name.toLocaleLowerCase().indexOf(this._filterBy.toLocaleLowerCase()) > -1);
+  }
+
+  get filter() {
+    return this._filterBy;
+  }
 }
